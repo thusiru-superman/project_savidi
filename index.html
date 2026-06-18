@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Love</title>
+    <style>
+        /* Premium Reset & Luxury Deep Dark Background */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cinzel', 'Playfair Display', 'Segoe UI', serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #16120e 0%, #0a0806 100%);
+            color: #f3e9dc;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* Removes the double outer page scroll entirely */
+            position: relative;
+        }
+
+        /* --- LUXURY ENTERING SCREEN (SPLASH GATE) --- */
+        #entry-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #1a140f 0%, #070504 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1.2s cubic-bezier(0.25, 1, 0.5, 1), visibility 1.2s;
+            gap: 30px;
+        }
+
+        .entry-glow-box {
+            text-align: center;
+            animation: pulseGlow 3s infinite alternate;
+        }
+
+        .entry-title {
+            font-size: 1.8rem;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .entry-subtitle {
+            font-size: 0.8rem;
+            color: #a89e92;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        .enter-btn-container {
+            position: relative;
+        }
+
+        .enter-btn {
+            background: rgba(22, 18, 14, 0.6);
+            color: #d4af37;
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            padding: 16px 40px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.7), inset 0 0 15px rgba(212, 175, 55, 0.1);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            outline: none;
+            z-index: 2;
+        }
+
+        .enter-btn:hover {
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.35), inset 0 0 10px rgba(212, 175, 55, 0.2);
+            transform: translateY(-3px);
+        }
+
+        /* --- SLOW CINEMATIC BURST PARTICLES --- */
+        .burst-particle {
+            position: fixed;
+            pointer-events: none;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            z-index: 10000;
+            box-shadow: 0 0 12px var(--glow-color);
+            animation: elegantExplode 1.8s cubic-bezier(0.075, 0.82, 0.165, 1) forwards;
+        }
+
+        @keyframes elegantExplode {
+            0% {
+                transform: translate(-50%, -50%) translate(0, 0) scale(1.5);
+                opacity: 1;
+            }
+            50% { opacity: 0.9; }
+            100% {
+                transform: translate(-50%, -50%) translate(var(--mx), calc(var(--my) + 50px)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(0.98); opacity: 0.85; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #entry-screen.fade-out {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* --- MAIN CONTENT STYLING --- */
+        #stars-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .audio-control-pill {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(10, 8, 6, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 10px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 100;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .audio-label {
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #d4af37;
+            font-weight: bold;
+        }
+
+        .eq-icon {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            width: 16px;
+            height: 14px;
+        }
+
+        .eq-bar {
+            width: 3px;
+            height: 100%;
+            background-color: #d4af37;
+            transform-origin: bottom;
+            animation: bounce 1s ease-in-out infinite alternate;
+            animation-play-state: paused;
+        }
+
+        .eq-bar:nth-child(2) { animation-delay: 0.2s; animation-duration: 0.8s; }
+        .eq-bar:nth-child(3) { animation-delay: 0.4s; animation-duration: 1.1s; }
+
+        .playing .eq-bar { animation-play-state: running; }
+
+        @keyframes bounce {
+            0% { transform: scaleY(0.2); }
+            100% { transform: scaleY(1); }
+        }
+
+        /* 3D Fixed Background Stage Layer */
+        .image-showcase-fixed {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centers the whole block nicely to fill the empty bottom space */
+            align-items: center;
+            padding: 20px;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease;
+        }
+
+        .permanent-stage-header {
+            font-size: 2.6rem;
+            font-weight: 400;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
+            z-index: 15;
+            text-align: center;
+        }
+
+        /* Image Stack Wrapper - Height expanded for larger images */
+        .image-cluster {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 530px; 
+            cursor: pointer;
+        }
+
+        /* Luxury Frame Styling - Scaled up to fill the layout */
+        .card-img {
+            border: 2px solid rgba(212, 175, 55, 0.45); 
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 40px rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            object-fit: cover;
+            background-color: #1a1510;
+            position: absolute;
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            opacity: 0;
+            transform: scale(0.6) translate3d(0, 120px, 0);
+            pointer-events: none;
+            width: 380px;
+            height: 500px;
+        }
+
+        /* Active Main View State */
+        .card-img.active {
+            opacity: 1;
+            transform: scale(1) translate3d(0, 0, 0) rotate(0deg);
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        /* Left Stack Hidden Position - Adjusted layout distance for larger dimensions */
+        .card-img.prev-stack {
+            opacity: 0.25;
+            transform: scale(0.78) translate3d(-340px, 25px, 0) rotate(-10deg);
+            z-index: 5;
+        }
+
+        /* Right Stack Hidden Position - Adjusted layout distance for larger dimensions */
+        .card-img.next-stack {
+            opacity: 0.25;
+            transform: scale(0.78) translate3d(-340px, 25px, 0) rotate(-10deg);
+            z-index: 5;
+            transform: scale(0.78) translate3d(340px, 25px, 0) rotate(10deg);
+            z-index: 5;
+        }
+
+        /* Navigation Dot Indicators */
+        .swipe-indicators {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            z-index: 20;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: #d4af37;
+            transform: scale(1.3);
+            box-shadow: 0 0 10px #d4af37;
+        }
+
+        .scroll-fade-footer {
+            font-size: 2.2rem;
+            font-weight: 300;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-top: 20px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            z-index: 15;
+        }
+
+        /* Tap Hint Text Decoration */
+        .scroll-hint-label {
+            font-size: 0.75rem;
+            color: #a89e92;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-top: 12px;
+            z-index: 15;
+            animation: bounceHint 2s infinite ease-in-out;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        @keyframes bounceHint {
+            0%, 100% { transform: translateY(0); opacity: 0.6; }
+            50% { transform: translateY(4px); opacity: 1; }
+        }
+
+        /* --- STICKY CENTERED SINGLE VIEWPORT TEXT BOX --- */
+        .scroll-content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 3; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Active Reveal State for Text Box Frame */
+        .scroll-content.reveal-active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .text-container {
+            background: rgba(10, 8, 6, 0.94); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.35); 
+            border-radius: 14px;
+            padding: 40px;
+            max-width: 640px;
+            width: 92%;
+            text-align: center;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.95), inset 0 0 40px rgba(212, 175, 55, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 85vh;
+            overflow-y: auto; 
+        }
+
+        /* Custom Scrollbar inside content card element */
+        .text-container::-webkit-scrollbar {
+            width: 5px;
+        }
+        .text-container::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+        }
+
+        .intro-paragraph {
+            font-size: 1.15rem;
+            color: #d4af37; 
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 300;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .square-paragraph {
+            font-size: 0.95rem;
+            line-height: 1.75;
+            color: #f3e9dc;
+            text-align: justify;
+            width: 100%;
+            padding: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.2); 
+            background: rgba(10, 8, 6, 0.4); 
+            border-radius: 6px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+        }
+
+        .highlight-quote {
+            border: 1px solid #d4af37;
+            padding: 20px;
+            border-radius: 6px;
+            font-style: italic;
+            color: #e6cb7b;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            background: rgba(10, 8, 6, 0.5);
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+        }
+
+        .signature-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .sign-off {
+            font-size: 0.9rem;
+            color: #dfd5c6;
+        }
+
+        .name-title {
+            font-size: 1.4rem;
+            color: #d4af37;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 400;
+            margin-bottom: 5px;
+        }
+
+        /* --- FLOATING POSITIONED WHATSAPP BUTTON --- */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #25d366;
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 1px solid rgba(37, 211, 102, 0.6);
+            padding: 12px 22px;
+            border-radius: 30px;
+            background: rgba(10, 8, 6, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            z-index: 105; 
+        }
+
+        .whatsapp-btn:hover {
+            background: rgba(37, 211, 102, 0.2);
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .footer-credits {
+            margin-top: 10px;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #a89e92;
+            line-height: 1.6;
+        }
+
+        /* --- MOBILE LAYOUT SYSTEM --- */
+        @media (max-width: 768px) {
+            .image-showcase-fixed {
+                justify-content: center;
+                padding-top: 40px;
+            }
+
+            .permanent-stage-header {
+                font-size: 1.8rem;
+                letter-spacing: 6px;
+                margin-bottom: 20px;
+            }
+
+            .scroll-fade-footer {
+                font-size: 1.4rem;
+                letter-spacing: 5px;
+                margin-top: 15px;
+            }
+
+            .scroll-hint-label {
+                font-size: 0.7rem;
+                letter-spacing: 3px;
+                margin-top: 10px;
+            }
+
+            /* Expanded Mobile Cluster Dimension to handle larger images without covering texts */
+            .image-cluster { 
+                height: 340px; 
+            }
+
+            /* Beautifully enhanced mobile card ratios to fix the screen empty gap */
+            .image-cluster .card-img { 
+                width: 240px !important; 
+                height: 320px !important;
+            }
+
+            .image-cluster .card-img.prev-stack { 
+                transform: scale(0.82) translate3d(-80px, 12px, 0) rotate(-7deg) !important; 
+            }
+            .image-cluster .card-img.next-stack { 
+                transform: scale(0.82) translate3d(80px, 12px, 0) rotate(7deg) !important; 
+            }
+
+            .text-container { padding: 25px 15px; gap: 14px; max-height: 80vh; }
+            .square-paragraph { font-size: 0.85rem; padding: 12px; }
+
+            .whatsapp-btn {
+                bottom: 15px;
+                right: 15px;
+                padding: 10px 18px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- --- LUXURY ENTRANCE GATE --- -->
+    <div id="entry-screen">
+        <div class="entry-glow-box">
+            <h2 class="entry-title">Happy Birthday, My Love</h2>
+            <p class="entry-subtitle">A special dynamic surprise inside</p>
+        </div>
+        <div class="enter-btn-container">
+            <button class="enter-btn" id="enter-btn">Open From Savindi</button>
+        </div>
+    </div>
+
+    <!-- Canvas for smooth falling star & heart graphics -->
+    <canvas id="stars-canvas"></canvas>
+
+    <!-- Audio Player -->
+    <audio id="bg-music" src="bgm.mp3" loop></audio>
+
+    <!-- Floating Audio Control Pill -->
+    <div class="audio-control-pill" id="audio-pill">
+        <span class="audio-label" id="audio-text">Music Off</span>
+        <div class="eq-icon">
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+            <div class="eq-bar"></div>
+        </div>
+    </div>
+
+    <!-- Background Photo Deck View Layer -->
+    <div class="image-showcase-fixed" id="fixed-stage">
+        <h1 class="permanent-stage-header">Happy Birthday</h1>
+        
+        <div class="image-cluster" id="swipe-deck">
+            <img src="main.jpeg" alt="Main Celebration" class="card-img active">
+            <img src="mem01.jpeg" alt="Memory 1" class="card-img next-stack">
+            <img src="mem02.jpeg" alt="Memory 2" class="card-img">
+            <img src="mem03.jpeg" alt="Memory 3" class="card-img">
+            <img src="mem04.jpeg" alt="Memory 4" class="card-img">
+        </div>
+
+        <div class="swipe-indicators" id="dots-wrap"></div>
+        <div class="scroll-fade-footer" id="dynamic-footer-title">Tharusha</div>
+        <div class="scroll-hint-label" id="interaction-hint">tap photo to flip →</div>
+    </div>
+
+    <!-- Viewport Fixed Container -->
+    <div class="scroll-content" id="sliding-text-layer">
+        <div class="text-container">
+            <p class="intro-paragraph">✨ To My Favorite Person 🌟</p>
+            
+            <div class="square-paragraph">
+                <p>🎉 Happy Birthday to the one who makes my world infinitely brighter! Today is all about celebrating you—the incredible man you are, your beautiful soul, and the amazing journey we are building together. Looking back through all these perfect memories reminds me of how truly lucky I am to have you holding my hand through it all. 💖</p>
+            </div>
+            
+            <div class="square-paragraph">
+                <p>🚀 You possess this rare, incredible ability to bring out the absolute best version of me, bringing so much safety, warmth, and constant laughter into my life. May this new chapter bring you all the massive breakthroughs, bold adventures, and beautiful success that your hardworking heart genuinely deserves! I'll be right here cheering you on, always. 🏆🎊</p>
+            </div>
+
+            <div class="square-paragraph">
+                <p>💫 Through every crazy chapter, hilarious inside joke, and sweet quiet moment, having you in my life makes everything better. Never forget how deeply you are loved, valued, and appreciated, not just today on your special day, but every single beautiful day that follows. Happy Birthday, my love! 🎂❤️📣</p>
+            </div>
+
+            <div class="highlight-quote">
+                "🦋 May your path stay bright, your beautiful spirit stay strong, and your heart always know how completely loved you are by me! 🌌❤️"
+            </div>
+
+            <div class="signature-section">
+                <p class="sign-off">With all my love, always and forever! 🥳🎁🎂</p>
+                <p class="name-title">Savindi 💕</p>
+                
+                <div class="footer-credits">
+                    Designed by Thusiru Web Productions ✨<br>
+                    Music Track ORDINARY BY alex warren 🎵
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Bottom-Right Contact Link -->
+    <a href="#" class="whatsapp-btn">
+        <svg style="width:16px; height:16px; fill:currentColor;" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397 0 11.948 0c3.179.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.339 11.906-11.89 11.906-2.01 0-3.991-.512-5.748-1.488L0 24zm6.066-4.43c1.644.976 3.51 1.49 5.421 1.493 5.408 0 9.808-4.401 9.81-9.813.001-2.62-1.02-5.085-2.879-6.946-1.858-1.861-4.322-2.885-6.943-2.887-5.412 0-9.813 4.402-9.815 9.814-.001 1.97.513 3.894 1.49 5.597l-.993 3.624 3.71-.973zm8.384-5.321c-.301-.15-1.78-.879-2.056-.979-.275-.1-.475-.15-.675.15-.199.299-.775.979-.95 1.178-.175.199-.35.224-.651.075-.3-.15-1.267-.467-2.414-1.491-.893-.797-1.496-1.781-1.671-2.08-.175-.3-.019-.462.13-.611.135-.134.301-.35.451-.524.15-.174.199-.299.299-.498.1-.2.05-.374-.025-.524-.075-.15-.675-1.625-.925-2.225-.244-.589-.493-.51-.675-.519-.174-.009-.374-.01-.574-.01-.2 0-.525.075-.8.374-.275.299-1.05 1.027-1.05 2.505s1.075 2.903 1.225 3.102c.15.2 2.115 3.227 5.125 4.525.715.309 1.274.494 1.709.633.719.228 1.373.195 1.89.118.577-.087 1.78-.727 2.03-1.43.25-.702.25-1.303.175-1.43-.075-.127-.275-.201-.576-.351z"/></svg>
+        CONTACT US 💬
+    </a>
+
+    <script>
+        const entryScreen = document.getElementById('entry-screen');
+        const enterBtn = document.getElementById('enter-btn');
+        const music = document.getElementById('bg-music');
+        const audioPill = document.getElementById('audio-pill');
+        const audioText = document.getElementById('audio-text');
+
+        function createBurstAnimation(clientX, clientY) {
+            const particleCount = 45;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('burst-particle');
+                const size = Math.random() * 5 + 3;
+                particle.style.width = `${size}px`; particle.style.height = `${size}px`;
+                const goldGlows = ['#d4af37', '#f3e9dc', '#ffdf7a', '#bfa34b'];
+                const selectedGold = goldGlows[Math.floor(Math.random() * goldGlows.length)];
+                particle.style.background = selectedGold;
+                particle.style.setProperty('--glow-color', selectedGold);
+                particle.style.left = `${clientX}px`; particle.style.top = `${clientY}px`;
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 160 + 50;
+                const mx = Math.cos(angle) * distance; const my = Math.sin(angle) * distance;
+                particle.style.setProperty('--mx', `${mx}px`); particle.style.setProperty('--my', `${my}px`);
+                document.body.appendChild(particle);
+                setTimeout(() => { particle.remove(); }, 1800);
+            }
+        }
+
+        enterBtn.addEventListener('click', (e) => {
+            try { createBurstAnimation(e.clientX, e.clientY); } catch(err){}
+            if (music) {
+                music.play().then(() => {
+                    audioPill.classList.add('playing');
+                    audioText.innerText = "Music On";
+                }).catch(err => console.log("Audio play blocked."));
+            }
+            entryScreen.classList.add('fade-out');
+            setTimeout(() => { entryScreen.style.display = 'none'; }, 1200);
+        });
+
+        function toggleMusic() {
+            if (music.paused) {
+                music.play().catch(e => {});
+                audioPill.classList.add('playing');
+                audioText.innerText = "Music On";
+            } else {
+                music.pause();
+                audioPill.classList.remove('playing');
+                audioText.innerText = "Music Off";
+            }
+        }
+        audioPill.addEventListener('click', toggleMusic);
+
+        /* --- Background Canvas Engine --- */
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+        const elements = [];
+        for (let i = 0; i < 160; i++) {
+            const isHeart = Math.random() < 0.40;
+            elements.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: isHeart ? Math.random() * 8 + 6 : Math.random() * 2 + 0.4,
+                speed: Math.random() * 0.7 + 0.2,
+                opacity: Math.random() * 0.6 + 0.3,
+                type: isHeart ? 'heart' : 'star'
+            });
+        }
+
+        function drawElements() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            elements.forEach(el => {
+                ctx.fillStyle = `rgba(212, 175, 55, ${el.opacity})`;
+                if (el.type === 'star') {
+                    ctx.beginPath(); ctx.arc(el.x, el.y, el.size, 0, Math.PI * 2); ctx.fill();
+                } else {
+                    ctx.font = `${el.size}px 'Segoe UI', Arial`; ctx.fillText('♥', el.x, el.y);
+                }
+                el.y += el.speed;
+                if (el.y > canvas.height) { el.y = -10; el.x = Math.random() * canvas.width; }
+            });
+            requestAnimationFrame(drawElements);
+        }
+        drawElements();
+
+        /* --- NATIVE CLICK/TAP GALLERY DECK LOGIC --- */
+        const fixedStage = document.getElementById('fixed-stage');
+        const swipeDeck = document.getElementById('swipe-deck');
+        const textLayer = document.getElementById('sliding-text-layer');
+        const cards = Array.from(document.querySelectorAll('.card-img'));
+        const dotsWrap = document.getElementById('dots-wrap');
+        let activeIdx = 0;
+
+        cards.forEach((_, idx) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (idx === 0) dot.classList.add('active');
+            dotsWrap.appendChild(dot);
+        });
+        const dots = Array.from(dotsWrap.getElementsByClassName('dot'));
+
+        function updateDeckPosition(idxToSet) {
+            cards.forEach((card, idx) => {
+                card.className = 'card-img'; 
+                if (idx === idxToSet) {
+                    card.classList.add('active');
+                } else if (idx === idxToSet - 1) {
+                    card.classList.add('prev-stack');
+                } else if (idx === idxToSet + 1) {
+                    card.classList.add('next-stack');
+                }
+            });
+            dots.forEach((dot, idx) => dot.classList.toggle('active', idx === idxToSet));
+        }
+
+        swipeDeck.addEventListener('click', () => {
+            if (activeIdx < cards.length - 1) {
+                activeIdx++;
+                updateDeckPosition(activeIdx);
+            } else {
+                fixedStage.style.opacity = '0.15';
+                fixedStage.style.transform = 'scale(0.92)';
+                textLayer.classList.add('reveal-active');
+            }
+        });
+    </script>
+</body>
+</html>
